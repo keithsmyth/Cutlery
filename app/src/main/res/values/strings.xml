@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Cutlery</string>
+    <string name="task_due_overdue">%s days</string>
+    <string name="task_due_soon">in %s days</string>
+    <string name="task_due">Due</string>
+    <string name="create_set_icon">Set Icon</string>
+    <string name="create_name">Name</string>
+    <string name="create_value">Value</string>
+    <string name="create_save">Save</string>
+    <string name="create_delete">Delete</string>
+    <string name="create_cancel">Cancel</string>
+    <string name="create_error_required">Required</string>
+    <string name="create_error_numeric">Numeric</string>
+    <string name="create_error_invalid">Invalid</string>
+    <string name="create_every">Every</string>
+</resources>

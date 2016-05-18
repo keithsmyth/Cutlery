@@ -2,6 +2,7 @@ package com.keithsmyth.cutlery.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
@@ -43,6 +44,7 @@ public class TaskFragment extends Fragment {
     private EditText frequencyValueEdit;
     private AppCompatSpinner frequencyDropdown;
     private BottomSheetBehavior bottomSheetBehavior;
+    private View shadeView;
     private ImageButton iconButton;
     private Button saveButton;
     private Button deleteButton;
@@ -106,7 +108,16 @@ public class TaskFragment extends Fragment {
             }
         });
 
+        shadeView = view.findViewById(R.id.shade_view);
+        shadeView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeIconDrawer();
+            }
+        });
+
         bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottom_sheet));
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetCallbackImpl());
 
         iconButton = (ImageButton) view.findViewById(R.id.icon_button);
         iconButton.setOnClickListener(new View.OnClickListener() {
@@ -175,12 +186,14 @@ public class TaskFragment extends Fragment {
     private void openIconDrawer() {
         if (getView() != null) {
             AndroidUtil.closeKeyboard(getView());
+            shadeView.setVisibility(View.VISIBLE);
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
     }
 
     private void closeIconDrawer() {
         if (getView() != null) {
+            shadeView.setVisibility(View.GONE);
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
     }
@@ -278,6 +291,30 @@ public class TaskFragment extends Fragment {
     private void showError(String error) {
         if (getView() != null) {
             Snackbar.make(getView(), error, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    private class BottomSheetCallbackImpl extends BottomSheetBehavior.BottomSheetCallback {
+
+        @Override
+        public void onStateChanged(@NonNull View bottomSheet, int newState) {
+            if (getView() == null) {
+                return;
+            }
+            switch (newState) {
+                case BottomSheetBehavior.STATE_EXPANDED:
+                    shadeView.setVisibility(View.VISIBLE);
+                    break;
+                case BottomSheetBehavior.STATE_HIDDEN:
+                case BottomSheetBehavior.STATE_COLLAPSED:
+                    shadeView.setVisibility(View.GONE);
+                    break;
+            }
+        }
+
+        @Override
+        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+            // no op
         }
     }
 

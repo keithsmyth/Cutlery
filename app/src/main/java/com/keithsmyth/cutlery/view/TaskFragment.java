@@ -1,12 +1,14 @@
 package com.keithsmyth.cutlery.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,6 +45,7 @@ public class TaskFragment extends Fragment {
     private ImageButton iconButton;
     private Button saveButton;
     private Button deleteButton;
+    @Nullable private AlertDialog confirmDeleteDialog;
 
     private AsyncTaskDelegate asyncTaskDelegate;
     private IconDao iconDao;
@@ -177,6 +180,9 @@ public class TaskFragment extends Fragment {
     @Override
     public void onStop() {
         asyncTaskDelegate.clearAsyncDataTasks();
+        if (confirmDeleteDialog != null) {
+            confirmDeleteDialog.dismiss();
+        }
         super.onStop();
     }
 
@@ -240,9 +246,21 @@ public class TaskFragment extends Fragment {
     }
 
     private void delete() {
-        asyncTaskDelegate.registerAsyncDataTask(taskDao.delete(taskId)
-            .setListener(new SaveTaskListenerImpl())
-            .execute());
+        confirmDeleteDialog = new AlertDialog.Builder(getContext())
+            .setTitle(R.string.create_confirm_delete_title)
+            .setMessage(R.string.create_confirm_delete_msg)
+            .setPositiveButton(R.string.create_delete, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO: show snackbar with UNDO
+                    asyncTaskDelegate.registerAsyncDataTask(taskDao.delete(taskId)
+                        .setListener(new SaveTaskListenerImpl())
+                        .execute());
+                }
+            })
+            .setNegativeButton(R.string.create_cancel, null)
+            .create();
+        confirmDeleteDialog.show();
     }
 
     private void cancel() {

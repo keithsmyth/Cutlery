@@ -151,6 +151,7 @@ public class TaskDao {
     }
 
     public AsyncDataTask<Void> delete(final int id) {
+        // TODO: Just archive
         return new AsyncDataTask<Void>(true) {
             @Override
             public Void task() {

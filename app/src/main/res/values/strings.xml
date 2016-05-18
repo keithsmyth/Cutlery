@@ -8,6 +8,8 @@
     <string name="create_value">Value</string>
     <string name="create_save">Save</string>
     <string name="create_delete">Delete</string>
+    <string name="create_confirm_delete_title">Delete this Task</string>
+    <string name="create_confirm_delete_msg">Are you sure?</string>
     <string name="create_cancel">Cancel</string>
     <string name="create_error_required">Required</string>
     <string name="create_error_numeric">Numeric</string>

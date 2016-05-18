@@ -25,14 +25,6 @@ public abstract class AsyncDataTask<OUT> {
         return this;
     }
 
-    public static void clear(AsyncDataTask<?>... params) {
-        for (AsyncDataTask<?> asyncDataTask : params) {
-            if (asyncDataTask != null) {
-                asyncDataTask.setListener(null);
-            }
-        }
-    }
-
     private class Async extends AsyncTask<Void, Void, OUT> {
 
         private Exception e;

@@ -1,7 +1,6 @@
 package com.keithsmyth.cutlery.view;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 
 import com.keithsmyth.cutlery.App;
 import com.keithsmyth.cutlery.R;
-import com.keithsmyth.cutlery.data.AsyncDataTask;
 import com.keithsmyth.cutlery.data.AsyncDataTaskListener;
 import com.keithsmyth.cutlery.data.IconDao;
 import com.keithsmyth.cutlery.data.TaskCompleteDao;
@@ -30,9 +28,8 @@ public class DoFragment extends Fragment {
 
     @Nullable private Navigates navigates;
     @Nullable private TaskAdapter taskAdapter;
-    @Nullable private AsyncDataTask<List<Task>> listTasksAsync;
-    @Nullable private AsyncDataTask<Void> createTaskCompleteAsync;
 
+    private AsyncTaskDelegate asyncTaskDelegate;
     private IconDao iconDao;
     private TaskDao taskDao;
     private TaskCompleteDao taskCompleteDao;
@@ -46,6 +43,7 @@ public class DoFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        asyncTaskDelegate = new AsyncTaskDelegate();
         iconDao = App.inject().iconDao();
         taskDao = App.inject().taskDao();
         taskCompleteDao = App.inject().taskCompleteDao();
@@ -93,7 +91,7 @@ public class DoFragment extends Fragment {
 
     @Override
     public void onStop() {
-        AsyncDataTask.clear(listTasksAsync, createTaskCompleteAsync);
+        asyncTaskDelegate.clearAsyncDataTasks();
 
         if (taskAdapter != null) {
             taskAdapter.setTaskActionListener(null);
@@ -103,9 +101,9 @@ public class DoFragment extends Fragment {
     }
 
     private void fetchData() {
-        listTasksAsync = taskDao.list()
+        asyncTaskDelegate.registerAsyncDataTask(taskDao.list()
             .setListener(new GetTasksListenerImpl())
-            .execute();
+            .execute());
     }
 
     private class TaskActionListenerImpl implements TaskAdapter.TaskActionListener {
@@ -121,9 +119,9 @@ public class DoFragment extends Fragment {
         public void onCompleted(Task task) {
             if (getView() == null) { return; }
             final TaskComplete taskComplete = new TaskComplete(new Date().getTime(), task.id);
-            createTaskCompleteAsync = taskCompleteDao.create(taskComplete)
+            asyncTaskDelegate.registerAsyncDataTask(taskCompleteDao.create(taskComplete)
                 .setListener(new CreateTaskCompleteListenerImpl())
-                .execute();
+                .execute());
         }
     }
 

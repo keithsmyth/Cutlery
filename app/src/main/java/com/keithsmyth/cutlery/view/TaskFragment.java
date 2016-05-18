@@ -22,7 +22,6 @@ import android.widget.ImageButton;
 
 import com.keithsmyth.cutlery.App;
 import com.keithsmyth.cutlery.R;
-import com.keithsmyth.cutlery.data.AsyncDataTask;
 import com.keithsmyth.cutlery.data.AsyncDataTaskListener;
 import com.keithsmyth.cutlery.data.IconDao;
 import com.keithsmyth.cutlery.data.TaskDao;
@@ -35,10 +34,6 @@ public class TaskFragment extends Fragment {
     private static final String EXTRA_TASK_ID = "EXTRA_TASK_ID";
 
     @Nullable private Navigates navigates;
-    @Nullable private AsyncDataTask<Task> getTaskAsync;
-    @Nullable private AsyncDataTask<Void> createTaskAsync;
-    @Nullable private AsyncDataTask<Void> updateTaskAsync;
-    @Nullable private AsyncDataTask<Void> deleteTaskAsync;
 
     private EditText nameEdit;
     private EditText frequencyValueEdit;
@@ -49,6 +44,7 @@ public class TaskFragment extends Fragment {
     private Button saveButton;
     private Button deleteButton;
 
+    private AsyncTaskDelegate asyncTaskDelegate;
     private IconDao iconDao;
     private TaskDao taskDao;
 
@@ -73,6 +69,7 @@ public class TaskFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        asyncTaskDelegate = new AsyncTaskDelegate();
         iconDao = App.inject().iconDao();
         taskDao = App.inject().taskDao();
         taskId = getArguments() != null ? getArguments().getInt(EXTRA_TASK_ID, -1) : -1;
@@ -179,7 +176,7 @@ public class TaskFragment extends Fragment {
 
     @Override
     public void onStop() {
-        AsyncDataTask.clear(getTaskAsync, createTaskAsync, updateTaskAsync, deleteTaskAsync);
+        asyncTaskDelegate.clearAsyncDataTasks();
         super.onStop();
     }
 
@@ -206,9 +203,9 @@ public class TaskFragment extends Fragment {
     }
 
     private void fetchData() {
-        getTaskAsync = taskDao.get(taskId)
+        asyncTaskDelegate.registerAsyncDataTask(taskDao.get(taskId)
             .setListener(new GetTaskListenerImpl())
-            .execute();
+            .execute());
     }
 
     private void populateData(Task task) {
@@ -224,9 +221,9 @@ public class TaskFragment extends Fragment {
 
     private void save() {
         if (validate()) {
-            createTaskAsync = taskDao.create(createTaskFromUserInput())
+            asyncTaskDelegate.registerAsyncDataTask(taskDao.create(createTaskFromUserInput())
                 .setListener(new SaveTaskListenerImpl())
-                .execute();
+                .execute());
         } else {
             showError(getString(R.string.create_error_invalid));
         }
@@ -234,18 +231,18 @@ public class TaskFragment extends Fragment {
 
     private void update() {
         if (validate()) {
-            updateTaskAsync = taskDao.update(createTaskFromUserInput())
+            asyncTaskDelegate.registerAsyncDataTask(taskDao.update(createTaskFromUserInput())
                 .setListener(new SaveTaskListenerImpl())
-                .execute();
+                .execute());
         } else {
             showError(getString(R.string.create_error_invalid));
         }
     }
 
     private void delete() {
-        deleteTaskAsync = taskDao.delete(taskId)
+        asyncTaskDelegate.registerAsyncDataTask(taskDao.delete(taskId)
             .setListener(new SaveTaskListenerImpl())
-            .execute();
+            .execute());
     }
 
     private void cancel() {

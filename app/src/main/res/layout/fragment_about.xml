@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/version_text"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:gravity="center_vertical"
+        android:lines="2"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"/>
+
+    <TextView
+        android:id="@+id/licence_text"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:background="?android:attr/selectableItemBackground"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/about_licence"
+        android:textColor="#0B0080"
+        android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"/>
+</LinearLayout>

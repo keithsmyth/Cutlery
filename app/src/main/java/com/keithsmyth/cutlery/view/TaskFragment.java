@@ -146,6 +146,7 @@ public class TaskFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
         if (taskId > 0) {
             // edit mode
             fetchData();
@@ -162,6 +163,7 @@ public class TaskFragment extends Fragment {
                     delete();
                 }
             });
+            navigates.setTitle(R.string.create_title_edit);
         } else {
             // create mode
             saveButton.setOnClickListener(new View.OnClickListener() {
@@ -177,6 +179,7 @@ public class TaskFragment extends Fragment {
                     cancel();
                 }
             });
+            navigates.setTitle(R.string.create_title_create);
         }
     }
 

@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.keithsmyth.cutlery.R;
 
@@ -22,8 +23,21 @@ public class MainActivity extends AppCompatActivity implements Navigates {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-        // TODO: Add About Page with feedback/bug, licences
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_about) {
+            to(new AboutFragment());
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

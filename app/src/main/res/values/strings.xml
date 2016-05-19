@@ -9,6 +9,8 @@
     <string name="task_deleted">Task Deleted</string>
     <string name="task_undo_delete_success">Undo delete success</string>
 
+    <string name="create_title_create">Create Task</string>
+    <string name="create_title_edit">Edit Task</string>
     <string name="create_set_icon">Set Icon</string>
     <string name="create_name">Name</string>
     <string name="create_value">Value</string>
@@ -21,4 +23,8 @@
     <string name="create_error_numeric">Numeric</string>
     <string name="create_error_invalid">Invalid</string>
     <string name="create_every">Every</string>
+
+    <string name="about_title">About</string>
+    <string name="about_version">%1$s\nVersion %2$s</string>
+    <string name="about_licence">Icons are made available under CC BY Licence</string>
 </resources>

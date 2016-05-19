@@ -89,6 +89,10 @@ public class DoFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        if (navigates != null) {
+            navigates.setTitle(R.string.app_name);
+        }
+
         if (taskAdapter != null) {
             taskAdapter.setTaskActionListener(new TaskActionListenerImpl());
         }

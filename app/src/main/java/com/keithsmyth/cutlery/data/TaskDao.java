@@ -29,6 +29,7 @@ public class TaskDao {
     public static final String COL_FREQUENCY_VALUE = "frequencyValue";
     public static final String COL_ICON_ID = "iconId";
     public static final String COL_COLOUR = "colour";
+    public static final String COL_ARCHIVED = "archived";
 
     public static final String[] COLS = {
         COL_ID,
@@ -36,15 +37,14 @@ public class TaskDao {
         COL_FREQUENCY,
         COL_FREQUENCY_VALUE,
         COL_ICON_ID,
-        COL_COLOUR
+        COL_COLOUR,
+        COL_ARCHIVED
     };
 
     private final SQLiteOpenHelper sqLiteOpenHelper;
-    private final TaskCompleteDao taskCompleteDao;
 
-    public TaskDao(SQLiteOpenHelper sqLiteOpenHelper, TaskCompleteDao taskCompleteDao) {
+    public TaskDao(SQLiteOpenHelper sqLiteOpenHelper) {
         this.sqLiteOpenHelper = sqLiteOpenHelper;
-        this.taskCompleteDao = taskCompleteDao;
     }
 
     public static final String CREATE = "create table " + TABLE + " (" +
@@ -54,7 +54,18 @@ public class TaskDao {
         COL_FREQUENCY_VALUE + " integer not null," +
         COL_ICON_ID + " integer not null," +
         COL_COLOUR + " text not null" +
+        COL_ARCHIVED + " boolean not null" +
         ")";
+
+    public static void upgrade(SQLiteDatabase db, int oldVersion) {
+        if (oldVersion == 1) {
+            final String sql = "alter table " + TABLE + " add column " + COL_ARCHIVED + " boolean";
+            db.execSQL(sql);
+            final ContentValues values = new ContentValues(1);
+            values.put(COL_ARCHIVED, false);
+            db.update(TABLE, values, null, null);
+        }
+    }
 
     public AsyncDataTask<List<Task>> list() {
         final String sql = "select t." + COL_ID + "," +
@@ -63,16 +74,20 @@ public class TaskDao {
             "t." + COL_FREQUENCY_VALUE + "," +
             "t." + COL_ICON_ID + "," +
             "t." + COL_COLOUR + "," +
+            "t." + COL_ARCHIVED + "," +
             "MAX(c." + TaskCompleteDao.COL_DATE_TIME + ") as dateTimeLastDone " +
             "from " + TABLE + " t " +
             "left outer join " + TaskCompleteDao.TABLE + " c " +
             "on t." + COL_ID + " = c." + TaskCompleteDao.COL_TASK_ID + " " +
+            "where t." + COL_ARCHIVED + " = 0 " +
             "group by t." + COL_ID + "," +
             "t." + COL_NAME + "," +
             "t." + COL_FREQUENCY + "," +
             "t." + COL_FREQUENCY_VALUE + "," +
             "t." + COL_ICON_ID + "," +
-            "t." + COL_COLOUR;
+            "t." + COL_COLOUR + "," +
+            "t." + COL_ARCHIVED;
+
         return new AsyncDataTask<List<Task>>(false) {
             @Override
             public List<Task> task() {
@@ -121,6 +136,7 @@ public class TaskDao {
         values.put(COL_FREQUENCY_VALUE, task.frequencyValue);
         values.put(COL_ICON_ID, task.iconId);
         values.put(COL_COLOUR, task.colour);
+        values.put(COL_ARCHIVED, task.isArchived);
         return new AsyncDataTask<Void>(true) {
             @Override
             public Void task() {
@@ -133,17 +149,18 @@ public class TaskDao {
 
     @NonNull
     public AsyncDataTask<Void> update(final Task task) {
-        final ContentValues values = new ContentValues(6);
-        values.put(COL_ID, task.id);
-        values.put(COL_NAME, task.name);
-        values.put(COL_FREQUENCY, task.frequency);
-        values.put(COL_FREQUENCY_VALUE, task.frequencyValue);
-        values.put(COL_ICON_ID, task.iconId);
-        values.put(COL_COLOUR, task.colour);
         return new AsyncDataTask<Void>(true) {
             @Override
             public Void task() {
                 final SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
+                final ContentValues values = new ContentValues(6);
+                values.put(COL_ID, task.id);
+                values.put(COL_NAME, task.name);
+                values.put(COL_FREQUENCY, task.frequency);
+                values.put(COL_FREQUENCY_VALUE, task.frequencyValue);
+                values.put(COL_ICON_ID, task.iconId);
+                values.put(COL_COLOUR, task.colour);
+                values.put(COL_ARCHIVED, task.isArchived);
                 db.update(TABLE, values, COL_ID + " = ?", new String[]{String.valueOf(task.id)});
                 return null;
             }
@@ -151,22 +168,13 @@ public class TaskDao {
     }
 
     public AsyncDataTask<Void> delete(final int id) {
-        // TODO: Just archive
         return new AsyncDataTask<Void>(true) {
             @Override
             public Void task() {
                 final SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
-                db.beginTransaction();
-                try {
-                    // delete task value
-                    db.delete(TABLE, COL_ID + " = ?", new String[]{String.valueOf(id)});
-                    // delete task complete values
-                    taskCompleteDao.deleteChildren(id, db);
-
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
+                final ContentValues values = new ContentValues(1);
+                values.put(COL_ARCHIVED, true);
+                db.update(TABLE, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
                 return null;
             }
         };
@@ -179,7 +187,8 @@ public class TaskDao {
         final int frequencyValue = cursor.getInt(3);
         final int iconId = cursor.getInt(4);
         final int colour = cursor.getInt(5);
-        final long dateTimeLastDone = includeLastDone ? cursor.getLong(6) : 0;
+        final boolean isArchived = cursor.getInt(6) != 0;
+        final long dateTimeLastDone = includeLastDone ? cursor.getLong(7) : 0;
         final int daysOverDue = includeLastDone
             ? calcDaysOverDue(dateTimeLastDone, frequency, frequencyValue)
             : 0;
@@ -190,6 +199,7 @@ public class TaskDao {
             frequencyValue,
             iconId,
             colour,
+            isArchived,
             dateTimeLastDone,
             daysOverDue);
     }

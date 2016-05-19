@@ -299,6 +299,7 @@ public class TaskFragment extends Fragment {
             Integer.parseInt(frequencyValueEdit.getText().toString()),
             iconId,
             Icon.getDefaultColor(getContext()),
+            false,
             0,
             0);
     }

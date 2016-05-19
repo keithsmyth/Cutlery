@@ -9,18 +9,38 @@ import com.keithsmyth.cutlery.model.TaskComplete;
 public class TaskCompleteDao {
 
     public static final String TABLE = "TaskComplete";
+    public static final String COL_ID = "id";
     public static final String COL_DATE_TIME = "dateTime";
     public static final String COL_TASK_ID = "taskId";
 
     public static final String[] COLS = {
+        COL_ID,
         COL_DATE_TIME,
         COL_TASK_ID
     };
 
     public static final String CREATE = "create table " + TABLE + " (" +
+        COL_ID + " integer not null primary key," +
         COL_DATE_TIME + " integer not null," +
         COL_TASK_ID + " integer not null references " + TaskDao.TABLE + "(" + TaskDao.COL_ID + ")" +
         ")";
+
+    public static void upgrade(SQLiteDatabase db, int oldVersion) {
+        if (oldVersion == 1) {
+            String sql = "alter table " + TABLE + " rename to temp";
+            db.execSQL(sql);
+            db.execSQL(CREATE);
+            sql = "insert into " + TABLE + " (" +
+                COL_DATE_TIME + "," +
+                COL_TASK_ID + ") " +
+                "select " + COL_DATE_TIME + ", " +
+                COL_TASK_ID + " " +
+                "from temp";
+            db.execSQL(sql);
+            db.execSQL("drop table temp");
+        }
+    }
+
     private final SQLiteOpenHelper sqLiteOpenHelper;
 
     public TaskCompleteDao(SQLiteOpenHelper sqLiteOpenHelper) {
@@ -39,9 +59,5 @@ public class TaskCompleteDao {
                 return null;
             }
         };
-    }
-
-    public void deleteChildren(int taskId, SQLiteDatabase db) {
-        db.delete(TABLE, COL_TASK_ID + " = ?", new String[] {String.valueOf(taskId)});
     }
 }

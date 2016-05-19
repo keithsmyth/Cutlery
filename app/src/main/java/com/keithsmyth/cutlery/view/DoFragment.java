@@ -118,7 +118,7 @@ public class DoFragment extends Fragment {
         @Override
         public void onCompleted(Task task) {
             if (getView() == null) { return; }
-            final TaskComplete taskComplete = new TaskComplete(new Date().getTime(), task.id);
+            final TaskComplete taskComplete = new TaskComplete(-1, new Date().getTime(), task.id);
             asyncTaskDelegate.registerAsyncDataTask(taskCompleteDao.create(taskComplete)
                 .setListener(new CreateTaskCompleteListenerImpl())
                 .execute());

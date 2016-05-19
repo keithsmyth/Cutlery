@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class CutleryOpenHelper extends SQLiteOpenHelper {
 
     private static final String NAME = "cutlery.db";
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
     public CutleryOpenHelper(Application application) {
         super(application, NAME, null, VERSION);
@@ -21,6 +21,13 @@ public class CutleryOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // no op
+        try {
+            db.beginTransaction();
+            TaskDao.upgrade(db, oldVersion);
+            TaskCompleteDao.upgrade(db, oldVersion);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 }

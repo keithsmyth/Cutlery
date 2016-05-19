@@ -19,7 +19,7 @@ public class DataInjector {
 
     public TaskDao taskDao() {
         if (taskDao == null) {
-            taskDao = new TaskDao(sqLiteOpenHelper(), taskCompleteDao());
+            taskDao = new TaskDao(sqLiteOpenHelper());
         }
         return taskDao;
     }

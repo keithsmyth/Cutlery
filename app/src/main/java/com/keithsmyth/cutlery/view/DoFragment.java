@@ -1,8 +1,10 @@
 package com.keithsmyth.cutlery.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -71,7 +73,9 @@ public class DoFragment extends Fragment {
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeItemTouchHelperCallback(taskAdapter));
         itemTouchHelper.attachToRecyclerView(tasksRecycler);
 
-        view.findViewById(R.id.create_fab).setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton createFab = (FloatingActionButton) view.findViewById(R.id.create_fab);
+        createFab.setColorFilter(Color.WHITE);
+        createFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (navigates != null) {

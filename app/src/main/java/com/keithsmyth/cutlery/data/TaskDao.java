@@ -236,8 +236,10 @@ public class TaskDao {
                 nextDue = dayLastDone + TimeUnit.DAYS.toMillis((7 * frequencyValue) + 1);
                 break;
             case Task.FREQUENCY_EVERY_MONTHS:
-                // TODO: Calculate day of month and extrapolate to next month(s)
-                nextDue = dayLastDone + TimeUnit.DAYS.toMillis((30 * frequencyValue) + 1);
+                final Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(dayLastDone);
+                cal.add(Calendar.MONTH, frequencyValue);
+                nextDue = cal.getTimeInMillis() + TimeUnit.DAYS.toMillis(1);
                 break;
             default:
                 Log.e(getClass().getSimpleName(), "Unknown frequency [" + frequency + "]");

@@ -12,6 +12,7 @@ public class DataInjector {
     @Nullable private TaskCompleteDao taskCompleteDao;
     @Nullable private IconDao iconDao;
     @Nullable private SQLiteOpenHelper sqLiteOpenHelper;
+    @Nullable private UndoStack undoStack;
 
     public DataInjector(Application application) {
         this.application = application;
@@ -43,5 +44,12 @@ public class DataInjector {
             sqLiteOpenHelper = new CutleryOpenHelper(application);
         }
         return sqLiteOpenHelper;
+    }
+
+    public UndoStack undoStack() {
+        if (undoStack == null) {
+            undoStack = new UndoStack();
+        }
+        return undoStack;
     }
 }

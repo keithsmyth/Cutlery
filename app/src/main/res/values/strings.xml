@@ -1,8 +1,14 @@
 <resources>
     <string name="app_name">Cutlery</string>
+    <string name="undo">Undo</string>
+
     <string name="task_due_overdue">%s days</string>
     <string name="task_due_soon">in %s days</string>
     <string name="task_due">Due</string>
+    <string name="task_completed">Task Completed</string>
+    <string name="task_deleted">Task Deleted</string>
+    <string name="task_undo_delete_success">Undo delete success</string>
+
     <string name="create_set_icon">Set Icon</string>
     <string name="create_name">Name</string>
     <string name="create_value">Value</string>

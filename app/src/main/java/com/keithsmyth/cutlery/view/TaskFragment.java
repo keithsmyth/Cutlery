@@ -27,6 +27,7 @@ import com.keithsmyth.cutlery.R;
 import com.keithsmyth.cutlery.data.AsyncDataTaskListener;
 import com.keithsmyth.cutlery.data.IconDao;
 import com.keithsmyth.cutlery.data.TaskDao;
+import com.keithsmyth.cutlery.data.UndoStack;
 import com.keithsmyth.cutlery.model.Icon;
 import com.keithsmyth.cutlery.model.Task;
 
@@ -50,6 +51,7 @@ public class TaskFragment extends Fragment {
     private AsyncTaskDelegate asyncTaskDelegate;
     private IconDao iconDao;
     private TaskDao taskDao;
+    private UndoStack undoStack;
 
     private int taskId;
     private int iconId;
@@ -75,6 +77,7 @@ public class TaskFragment extends Fragment {
         asyncTaskDelegate = new AsyncTaskDelegate();
         iconDao = App.inject().iconDao();
         taskDao = App.inject().taskDao();
+        undoStack = App.inject().undoStack();
         taskId = getArguments() != null ? getArguments().getInt(EXTRA_TASK_ID, -1) : -1;
     }
 
@@ -252,9 +255,8 @@ public class TaskFragment extends Fragment {
             .setPositiveButton(R.string.create_delete, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    // TODO: show snackbar with UNDO
                     asyncTaskDelegate.registerAsyncDataTask(taskDao.delete(taskId)
-                        .setListener(new SaveTaskListenerImpl())
+                        .setListener(new DeleteTaskListenerImpl(taskId))
                         .execute());
                 }
             })
@@ -365,7 +367,29 @@ public class TaskFragment extends Fragment {
 
         @Override
         public void onSuccess(Void aVoid) {
-            if (navigates != null) {
+            if (getView() != null && navigates != null) {
+                navigates.back();
+            }
+        }
+
+        @Override
+        public void onError(Exception e) {
+            showError(e.getMessage());
+        }
+    }
+
+    private class DeleteTaskListenerImpl implements AsyncDataTaskListener<Void> {
+
+        private final int taskId;
+
+        private DeleteTaskListenerImpl(int taskId) {
+            this.taskId = taskId;
+        }
+
+        @Override
+        public void onSuccess(Void aVoid) {
+            if (getView() != null && navigates != null) {
+                undoStack.setDeleteTask(taskId);
                 navigates.back();
             }
         }

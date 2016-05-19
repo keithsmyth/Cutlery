@@ -171,13 +171,27 @@ public class TaskDao {
         return new AsyncDataTask<Void>(true) {
             @Override
             public Void task() {
-                final SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
-                final ContentValues values = new ContentValues(1);
-                values.put(COL_ARCHIVED, true);
-                db.update(TABLE, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
+                updateTaskArchived(id, true);
                 return null;
             }
         };
+    }
+
+    public AsyncDataTask<Void> undoDelete(final int id) {
+        return new AsyncDataTask<Void>(true) {
+            @Override
+            public Void task() {
+                updateTaskArchived(id, false);
+                return null;
+            }
+        };
+    }
+
+    private void updateTaskArchived(int id, boolean value) {
+        final SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
+        final ContentValues values = new ContentValues(1);
+        values.put(COL_ARCHIVED, value);
+        db.update(TABLE, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
     }
 
     private Task map(Cursor cursor, boolean includeLastDone) {

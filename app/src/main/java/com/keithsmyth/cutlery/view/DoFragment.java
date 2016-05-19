@@ -18,6 +18,7 @@ import com.keithsmyth.cutlery.data.AsyncDataTaskListener;
 import com.keithsmyth.cutlery.data.IconDao;
 import com.keithsmyth.cutlery.data.TaskCompleteDao;
 import com.keithsmyth.cutlery.data.TaskDao;
+import com.keithsmyth.cutlery.data.UndoStack;
 import com.keithsmyth.cutlery.model.Task;
 import com.keithsmyth.cutlery.model.TaskComplete;
 
@@ -33,6 +34,7 @@ public class DoFragment extends Fragment {
     private IconDao iconDao;
     private TaskDao taskDao;
     private TaskCompleteDao taskCompleteDao;
+    private UndoStack undoStack;
 
     @Override
     public void onAttach(Context context) {
@@ -46,6 +48,7 @@ public class DoFragment extends Fragment {
         asyncTaskDelegate = new AsyncTaskDelegate();
         iconDao = App.inject().iconDao();
         taskDao = App.inject().taskDao();
+        undoStack = App.inject().undoStack();
         taskCompleteDao = App.inject().taskCompleteDao();
     }
 
@@ -87,6 +90,8 @@ public class DoFragment extends Fragment {
         }
 
         fetchData();
+
+        processUndoStack();
     }
 
     @Override
@@ -104,6 +109,22 @@ public class DoFragment extends Fragment {
         asyncTaskDelegate.registerAsyncDataTask(taskDao.list()
             .setListener(new GetTasksListenerImpl())
             .execute());
+    }
+
+    private void processUndoStack() {
+        final int taskId = undoStack.getDeleteTaskId();
+        if (taskId == UndoStack.NO_TASK || getView() == null) { return; }
+
+        Snackbar.make(getView(), R.string.task_deleted, Snackbar.LENGTH_LONG)
+            .setAction(R.string.undo, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    asyncTaskDelegate.registerAsyncDataTask(taskDao.undoDelete(taskId)
+                        .setListener(new UndoDeleteCompleteListenerImpl())
+                        .execute());
+                }
+            })
+            .show();
     }
 
     private class TaskActionListenerImpl implements TaskAdapter.TaskActionListener {
@@ -149,7 +170,25 @@ public class DoFragment extends Fragment {
         @Override
         public void onSuccess(Void aVoid) {
             if (getView() != null) {
-                Snackbar.make(getView(), "Task completed", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(getView(), R.string.task_completed, Snackbar.LENGTH_SHORT).show();
+                fetchData();
+            }
+        }
+
+        @Override
+        public void onError(Exception e) {
+            if (getView() != null) {
+                Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private class UndoDeleteCompleteListenerImpl implements AsyncDataTaskListener<Void> {
+
+        @Override
+        public void onSuccess(Void aVoid) {
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.task_undo_delete_success, Snackbar.LENGTH_SHORT).show();
                 fetchData();
             }
         }

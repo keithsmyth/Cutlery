@@ -127,6 +127,7 @@ public class DoFragment extends Fragment {
         final int taskId = undoStack.getDeleteTaskId();
         if (taskId == UndoStack.NO_TASK || getView() == null) { return; }
 
+        undoStack.setDeleteTask(UndoStack.NO_TASK);
         Snackbar.make(getView(), R.string.task_deleted, Snackbar.LENGTH_LONG)
             .setAction(R.string.undo, new View.OnClickListener() {
                 @Override

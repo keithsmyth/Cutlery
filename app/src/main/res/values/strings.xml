@@ -2,6 +2,7 @@
     <string name="app_name">Cutlery</string>
     <string name="undo">Undo</string>
 
+    <string name="task_empty">Tap the button\nto create a task!</string>
     <string name="task_due_overdue">%s days</string>
     <string name="task_due_soon">in %s days</string>
     <string name="task_due">Due</string>

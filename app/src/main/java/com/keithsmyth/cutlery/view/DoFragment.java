@@ -38,6 +38,8 @@ public class DoFragment extends Fragment {
     private TaskCompleteDao taskCompleteDao;
     private UndoStack undoStack;
 
+    private View emptyView;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -83,6 +85,8 @@ public class DoFragment extends Fragment {
                 }
             }
         });
+
+        emptyView = view.findViewById(R.id.empty_view);
     }
 
     @Override
@@ -135,6 +139,10 @@ public class DoFragment extends Fragment {
             .show();
     }
 
+    private void showEmptyView(boolean shouldShow) {
+        emptyView.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
+    }
+
     private class TaskActionListenerImpl implements TaskAdapter.TaskActionListener {
 
         @Override
@@ -156,11 +164,10 @@ public class DoFragment extends Fragment {
 
     private class GetTasksListenerImpl implements AsyncDataTaskListener<List<Task>> {
 
-        // TODO: Add empty state
-
         @Override
         public void onSuccess(List<Task> tasks) {
             if (getView() != null && taskAdapter != null) {
+                showEmptyView(tasks.isEmpty());
                 taskAdapter.setTasks(tasks);
             }
         }

@@ -8,7 +8,7 @@
     <string name="task_due">Due</string>
     <string name="task_completed">Task Completed</string>
     <string name="task_deleted">Task Deleted</string>
-    <string name="task_undo_delete_success">Undo delete success</string>
+    <string name="task_undo_success">Undo success</string>
 
     <string name="create_title_create">Create Task</string>
     <string name="create_title_edit">Edit Task</string>

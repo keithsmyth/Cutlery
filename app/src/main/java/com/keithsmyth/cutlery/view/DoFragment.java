@@ -133,7 +133,7 @@ public class DoFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     asyncTaskDelegate.registerAsyncDataTask(taskDao.undoDelete(taskId)
-                        .setListener(new UndoDeleteCompleteListenerImpl())
+                        .setListener(new UndoCompleteListenerImpl())
                         .execute());
                 }
             })
@@ -181,12 +181,21 @@ public class DoFragment extends Fragment {
         }
     }
 
-    private class CreateTaskCompleteListenerImpl implements AsyncDataTaskListener<Void> {
+    private class CreateTaskCompleteListenerImpl implements AsyncDataTaskListener<Integer> {
 
         @Override
-        public void onSuccess(Void aVoid) {
+        public void onSuccess(final Integer taskCompleteId) {
             if (getView() != null) {
-                Snackbar.make(getView(), R.string.task_completed, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(getView(), R.string.task_completed, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            asyncTaskDelegate.registerAsyncDataTask(taskCompleteDao.delete(taskCompleteId)
+                                .setListener(new UndoCompleteListenerImpl())
+                                .execute());
+                        }
+                    })
+                    .show();
                 fetchData();
             }
         }
@@ -199,13 +208,13 @@ public class DoFragment extends Fragment {
         }
     }
 
-    private class UndoDeleteCompleteListenerImpl implements AsyncDataTaskListener<Void> {
+    private class UndoCompleteListenerImpl implements AsyncDataTaskListener<Void> {
 
         @Override
         public void onSuccess(Void aVoid) {
             if (getView() != null) {
-                Snackbar.make(getView(), R.string.task_undo_delete_success, Snackbar.LENGTH_SHORT).show();
                 fetchData();
+                Snackbar.make(getView(), R.string.task_undo_success, Snackbar.LENGTH_SHORT).show();
             }
         }
 

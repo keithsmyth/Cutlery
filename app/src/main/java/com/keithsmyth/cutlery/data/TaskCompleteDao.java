@@ -47,15 +47,25 @@ public class TaskCompleteDao {
         this.sqLiteOpenHelper = sqLiteOpenHelper;
     }
 
-    public AsyncDataTask<Void> create(TaskComplete taskComplete) {
+    public AsyncDataTask<Integer> create(TaskComplete taskComplete) {
         final ContentValues values = new ContentValues(2);
         values.put(COL_DATE_TIME, taskComplete.dateTime);
         values.put(COL_TASK_ID, taskComplete.taskId);
+        return new AsyncDataTask<Integer>(true) {
+            @Override
+            public Integer task() {
+                final SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
+                return (int) db.insert(TABLE, null, values);
+            }
+        };
+    }
+
+    public AsyncDataTask<Void> delete(final int taskCompleteId) {
         return new AsyncDataTask<Void>(true) {
             @Override
             public Void task() {
                 final SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
-                db.insert(TABLE, null, values);
+                db.delete(TABLE, COL_ID + " = ?", new String[]{String.valueOf(taskCompleteId)});
                 return null;
             }
         };

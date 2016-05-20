@@ -53,7 +53,7 @@ public class TaskDao {
         COL_FREQUENCY + " text not null," +
         COL_FREQUENCY_VALUE + " integer not null," +
         COL_ICON_ID + " integer not null," +
-        COL_COLOUR + " text not null" +
+        COL_COLOUR + " text not null, " +
         COL_ARCHIVED + " boolean not null" +
         ")";
 

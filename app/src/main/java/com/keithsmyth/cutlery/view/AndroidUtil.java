@@ -11,6 +11,7 @@ public class AndroidUtil {
     }
 
     public static void closeKeyboard(View view) {
+        if (view == null) { return; }
         final InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }

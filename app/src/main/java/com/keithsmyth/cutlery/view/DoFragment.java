@@ -27,6 +27,9 @@ import com.keithsmyth.cutlery.model.TaskComplete;
 import java.util.Date;
 import java.util.List;
 
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
+import static com.keithsmyth.cutlery.view.DividerItemDecoration.VERTICAL_LIST;
+
 public class DoFragment extends Fragment {
 
     @Nullable private Navigates navigates;
@@ -70,6 +73,7 @@ public class DoFragment extends Fragment {
         final RecyclerView tasksRecycler = (RecyclerView) view.findViewById(R.id.tasks_recycler);
         tasksRecycler.setHasFixedSize(true);
         tasksRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        tasksRecycler.addItemDecoration(new DividerItemDecoration(getContext(), VERTICAL_LIST));
         taskAdapter = new TaskAdapter(iconDao);
         tasksRecycler.setAdapter(taskAdapter);
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeItemTouchHelperCallback(taskAdapter));
@@ -128,7 +132,7 @@ public class DoFragment extends Fragment {
         if (taskId == UndoStack.NO_TASK || getView() == null) { return; }
 
         undoStack.setDeleteTask(UndoStack.NO_TASK);
-        Snackbar.make(getView(), R.string.task_deleted, Snackbar.LENGTH_LONG)
+        Snackbar.make(getView(), R.string.task_deleted, LENGTH_LONG)
             .setAction(R.string.undo, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -176,7 +180,7 @@ public class DoFragment extends Fragment {
         @Override
         public void onError(Exception e) {
             if (getView() != null) {
-                Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getView(), e.getMessage(), LENGTH_LONG).show();
             }
         }
     }
@@ -186,7 +190,7 @@ public class DoFragment extends Fragment {
         @Override
         public void onSuccess(final Integer taskCompleteId) {
             if (getView() != null) {
-                Snackbar.make(getView(), R.string.task_completed, Snackbar.LENGTH_LONG)
+                Snackbar.make(getView(), R.string.task_completed, LENGTH_LONG)
                     .setAction(R.string.undo, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -203,7 +207,7 @@ public class DoFragment extends Fragment {
         @Override
         public void onError(Exception e) {
             if (getView() != null) {
-                Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getView(), e.getMessage(), LENGTH_LONG).show();
             }
         }
     }
@@ -221,7 +225,7 @@ public class DoFragment extends Fragment {
         @Override
         public void onError(Exception e) {
             if (getView() != null) {
-                Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getView(), e.getMessage(), LENGTH_LONG).show();
             }
         }
     }

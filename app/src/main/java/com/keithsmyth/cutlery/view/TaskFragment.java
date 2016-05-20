@@ -36,8 +36,6 @@ public class TaskFragment extends Fragment {
     private static final String EXTRA_ICON_ID = "EXTRA_ICON_ID";
     private static final String EXTRA_TASK_ID = "EXTRA_TASK_ID";
 
-    @Nullable private Navigates navigates;
-
     private EditText nameEdit;
     private EditText frequencyValueEdit;
     private AppCompatSpinner frequencyDropdown;
@@ -48,6 +46,7 @@ public class TaskFragment extends Fragment {
     private Button deleteButton;
     @Nullable private AlertDialog confirmDeleteDialog;
 
+    private Navigates navigates;
     private AsyncTaskDelegate asyncTaskDelegate;
     private IconDao iconDao;
     private TaskDao taskDao;
@@ -185,6 +184,7 @@ public class TaskFragment extends Fragment {
 
     @Override
     public void onStop() {
+        AndroidUtil.closeKeyboard(getView());
         asyncTaskDelegate.clearAsyncDataTasks();
         if (confirmDeleteDialog != null) {
             confirmDeleteDialog.dismiss();

@@ -1,6 +1,7 @@
 package com.keithsmyth.cutlery.view;
 
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -31,13 +32,23 @@ public class MainActivity extends AppCompatActivity implements Navigates {
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_about) {
-            to(new AboutFragment());
-            return true;
+        switch (id) {
+            case R.id.action_about:
+                to(new AboutFragment());
+                return true;
+            case android.R.id.home:
+                back();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        final boolean shouldShowBackButton = getSupportFragmentManager().getBackStackEntryCount() > 1;
+        showBackButton(shouldShowBackButton);
     }
 
     @Override
@@ -50,10 +61,18 @@ public class MainActivity extends AppCompatActivity implements Navigates {
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(fragment.getClass().getName())
             .commit();
+        showBackButton(true);
     }
 
     @Override
     public void back() {
         onBackPressed();
+    }
+
+    private void showBackButton(boolean isVisible) {
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar == null) { return; }
+        actionBar.setDisplayShowHomeEnabled(isVisible);
+        actionBar.setDisplayHomeAsUpEnabled(isVisible);
     }
 }

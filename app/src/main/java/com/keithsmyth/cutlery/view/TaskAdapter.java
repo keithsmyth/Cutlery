@@ -54,7 +54,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
         }
         holder.dueText.setText(dueText);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.clickView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (taskActionListener != null) {
@@ -95,6 +95,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
         public final ImageView iconImage;
         public final TextView nameText;
         public final TextView dueText;
+        public final View clickView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -102,6 +103,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
             iconImage = (ImageView) itemView.findViewById(R.id.icon_image);
             nameText = (TextView) itemView.findViewById(R.id.name_text);
             dueText = (TextView) itemView.findViewById(R.id.due_text);
+            clickView = itemView.findViewById(R.id.click_view);
         }
     }
 

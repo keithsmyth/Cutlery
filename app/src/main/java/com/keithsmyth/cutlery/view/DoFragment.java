@@ -76,7 +76,9 @@ public class DoFragment extends Fragment {
         tasksRecycler.addItemDecoration(new DividerItemDecoration(getContext(), VERTICAL_LIST));
         taskAdapter = new TaskAdapter(iconDao);
         tasksRecycler.setAdapter(taskAdapter);
-        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeItemTouchHelperCallback(taskAdapter));
+        final SwipeItemTouchHelperCallback swipeItemTouchHelperCallback = new SwipeItemTouchHelperCallback(taskAdapter);
+        swipeItemTouchHelperCallback.setSwipeBackground(view.findViewById(R.id.swipe_item_background));
+        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeItemTouchHelperCallback);
         itemTouchHelper.attachToRecyclerView(tasksRecycler);
 
         final FloatingActionButton createFab = (FloatingActionButton) view.findViewById(R.id.create_fab);

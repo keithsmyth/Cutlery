@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/swipe_item_background"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/listPreferredItemHeight"
+        android:background="@color/primary"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="?attr/listPreferredItemHeight"
+            android:layout_height="?attr/listPreferredItemHeight"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_done_black_24dp"
+            tools:ignore="ContentDescription"/>
+    </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/tasks_recycler"

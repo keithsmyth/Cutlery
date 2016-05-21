@@ -99,13 +99,14 @@
             android:text="@string/create_set_icon"
             tools:ignore="RelativeOverlap"/>
 
-        <android.support.v7.widget.AppCompatImageButton
+        <ImageButton
             android:id="@+id/close_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentEnd="true"
             android:background="?attr/selectableItemBackground"
-            app:srcCompat="@drawable/ic_clear_black_24dp"/>
+            app:srcCompat="@drawable/ic_clear_black_24dp"
+            android:contentDescription="@string/create_close_icon_drawer"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/icon_recycler"

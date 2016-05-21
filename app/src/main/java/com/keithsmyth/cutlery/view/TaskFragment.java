@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -279,6 +280,7 @@ public class TaskFragment extends Fragment {
         boolean isValid = true;
         if (iconId == -1) {
             isValid = false;
+            iconButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
         }
         if (TextUtils.isEmpty(nameEdit.getText().toString())) {
             nameEdit.setError(getString(R.string.create_error_required));

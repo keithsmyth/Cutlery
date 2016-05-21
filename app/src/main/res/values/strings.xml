@@ -25,6 +25,8 @@
     <string name="create_error_invalid">Invalid</string>
     <string name="create_every">Every</string>
     <string name="create_close_icon_drawer">Close icon drawer</string>
+    <string name="create_task_identity">Identity</string>
+    <string name="create_repeat_frequency">Frequency</string>
 
     <string name="about_title">About</string>
     <string name="about_version">%1$s\nVersion %2$s</string>

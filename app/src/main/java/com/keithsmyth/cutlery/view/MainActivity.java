@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements Navigates {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        final boolean shouldShowBackButton = getSupportFragmentManager().getBackStackEntryCount() > 1;
+        final boolean shouldShowBackButton = getSupportFragmentManager().getBackStackEntryCount() > 0;
         showBackButton(shouldShowBackButton);
     }
 

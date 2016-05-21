@@ -11,6 +11,18 @@
         android:layout_height="match_parent"
         android:columnCount="2">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="2"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"
+            android:lines="1"
+            android:text="@string/create_task_identity"
+            android:textSize="20sp"/>
+
         <ImageButton
             android:id="@+id/icon_button"
             android:layout_width="@dimen/icon_size"
@@ -19,7 +31,7 @@
             android:background="?attr/selectableItemBackground"
             android:contentDescription="@string/create_set_icon"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/ic_face_black_24dp"/>
+            app:srcCompat="@drawable/ic_add_circle_outline_black_24dp"/>
 
         <EditText
             android:id="@+id/name_edit"
@@ -30,6 +42,19 @@
             android:inputType="textAutoCorrect"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="2"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"
+            android:lines="1"
+            android:text="@string/create_repeat_frequency"
+            android:textSize="20sp"/>
 
         <EditText
             android:id="@+id/frequency_value_edit"

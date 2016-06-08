@@ -1,4 +1,4 @@
-package com.keithsmyth.cutlery.view;
+package com.keithsmyth.cutlery.view.tasklist;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -23,6 +23,11 @@ import com.keithsmyth.cutlery.data.TaskDao;
 import com.keithsmyth.cutlery.data.UndoStack;
 import com.keithsmyth.cutlery.model.Task;
 import com.keithsmyth.cutlery.model.TaskComplete;
+import com.keithsmyth.cutlery.view.AsyncTaskDelegate;
+import com.keithsmyth.cutlery.view.DividerItemDecoration;
+import com.keithsmyth.cutlery.view.Navigates;
+import com.keithsmyth.cutlery.view.SwipeItemTouchHelperCallback;
+import com.keithsmyth.cutlery.view.task.TaskFragment;
 
 import java.util.Date;
 import java.util.List;

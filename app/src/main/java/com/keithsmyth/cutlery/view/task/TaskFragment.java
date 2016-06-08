@@ -1,4 +1,4 @@
-package com.keithsmyth.cutlery.view;
+package com.keithsmyth.cutlery.view.task;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -31,6 +31,9 @@ import com.keithsmyth.cutlery.data.TaskDao;
 import com.keithsmyth.cutlery.data.UndoStack;
 import com.keithsmyth.cutlery.model.Icon;
 import com.keithsmyth.cutlery.model.Task;
+import com.keithsmyth.cutlery.view.AndroidUtil;
+import com.keithsmyth.cutlery.view.AsyncTaskDelegate;
+import com.keithsmyth.cutlery.view.Navigates;
 
 public class TaskFragment extends Fragment {
 

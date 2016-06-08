@@ -54,7 +54,7 @@ public class SwipeItemTouchHelperCallback extends ItemTouchHelper.Callback {
         this.swipeBackground = swipeBackground;
     }
 
-    interface SwipeListener {
+    public interface SwipeListener {
 
         void onItemSwiped(int position);
     }

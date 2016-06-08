@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.keithsmyth.cutlery.R;
+import com.keithsmyth.cutlery.view.about.AboutFragment;
+import com.keithsmyth.cutlery.view.tasklist.DoFragment;
 
 public class MainActivity extends AppCompatActivity implements Navigates {
 

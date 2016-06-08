@@ -1,4 +1,4 @@
-package com.keithsmyth.cutlery.view;
+package com.keithsmyth.cutlery.view.task;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

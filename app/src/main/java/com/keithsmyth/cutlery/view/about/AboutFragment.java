@@ -1,4 +1,4 @@
-package com.keithsmyth.cutlery.view;
+package com.keithsmyth.cutlery.view.about;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.keithsmyth.cutlery.BuildConfig;
 import com.keithsmyth.cutlery.R;
+import com.keithsmyth.cutlery.view.Navigates;
 
 public class AboutFragment extends Fragment {
 

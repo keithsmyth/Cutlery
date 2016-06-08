@@ -1,4 +1,4 @@
-package com.keithsmyth.cutlery.view;
+package com.keithsmyth.cutlery.view.tasklist;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.keithsmyth.cutlery.R;
 import com.keithsmyth.cutlery.data.IconDao;
 import com.keithsmyth.cutlery.model.Task;
+import com.keithsmyth.cutlery.view.SwipeItemTouchHelperCallback;
 
 import java.util.ArrayList;
 import java.util.List;

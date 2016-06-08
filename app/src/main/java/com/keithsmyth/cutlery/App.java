@@ -1,20 +1,22 @@
 package com.keithsmyth.cutlery;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.keithsmyth.cutlery.data.DataInjector;
 
 public class App extends Application {
 
-    private static DataInjector injector;
+    private DataInjector injector;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        injector = new DataInjector(this);
+    public static App get(Context context) {
+        return (App) context.getApplicationContext();
     }
 
-    public static DataInjector inject() {
+    public DataInjector inject() {
+        if (injector == null) {
+            injector = new DataInjector(this);
+        }
         return injector;
     }
 }

@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import com.keithsmyth.cutlery.App;
 import com.keithsmyth.cutlery.R;
 import com.keithsmyth.cutlery.data.AsyncDataTaskListener;
+import com.keithsmyth.cutlery.data.DataInjector;
 import com.keithsmyth.cutlery.data.IconDao;
 import com.keithsmyth.cutlery.data.TaskDao;
 import com.keithsmyth.cutlery.data.UndoStack;
@@ -78,9 +79,10 @@ public class TaskFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         asyncTaskDelegate = new AsyncTaskDelegate();
-        iconDao = App.inject().iconDao();
-        taskDao = App.inject().taskDao();
-        undoStack = App.inject().undoStack();
+        final DataInjector injector = App.get(getContext()).inject();
+        iconDao = injector.iconDao();
+        taskDao = injector.taskDao();
+        undoStack = injector.undoStack();
         taskId = getArguments() != null ? getArguments().getInt(EXTRA_TASK_ID, -1) : -1;
     }
 

@@ -12,7 +12,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         injector = new DataInjector(this);
-        // TODO: Google analytics
     }
 
     public static DataInjector inject() {

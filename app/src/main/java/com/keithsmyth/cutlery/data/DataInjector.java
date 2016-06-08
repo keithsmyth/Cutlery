@@ -4,6 +4,8 @@ import android.app.Application;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 public class DataInjector {
 
     private final Application application;
@@ -13,6 +15,7 @@ public class DataInjector {
     @Nullable private IconDao iconDao;
     @Nullable private SQLiteOpenHelper sqLiteOpenHelper;
     @Nullable private UndoStack undoStack;
+    @Nullable private FirebaseAnalytics firebaseAnalytics;
 
     public DataInjector(Application application) {
         this.application = application;
@@ -51,5 +54,12 @@ public class DataInjector {
             undoStack = new UndoStack();
         }
         return undoStack;
+    }
+
+    public FirebaseAnalytics firebaseAnalytics() {
+        if (firebaseAnalytics == null) {
+            firebaseAnalytics = FirebaseAnalytics.getInstance(application);
+        }
+        return firebaseAnalytics;
     }
 }

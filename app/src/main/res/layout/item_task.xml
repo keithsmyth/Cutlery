@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toEndOf="@id/icon_image"
-        android:layout_toStartOf="@+id/due_text"
+        android:layout_toStartOf="@+id/due_undo_text"
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:lines="1"
@@ -27,7 +27,7 @@
         tools:text="Task Name"/>
 
     <TextView
-        android:id="@id/due_text"
+        android:id="@id/due_undo_text"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"

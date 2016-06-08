@@ -81,8 +81,13 @@ public class DoFragment extends Fragment {
         tasksRecycler.addItemDecoration(new DividerItemDecoration(getContext(), VERTICAL_LIST));
         taskAdapter = new TaskAdapter(iconDao);
         tasksRecycler.setAdapter(taskAdapter);
+
         final SwipeItemTouchHelperCallback swipeItemTouchHelperCallback = new SwipeItemTouchHelperCallback(taskAdapter);
-        swipeItemTouchHelperCallback.setSwipeBackground(view.findViewById(R.id.swipe_item_background));
+        final ViewGroup viewGroup = (ViewGroup) view;
+        final View swipeItemBackground = LayoutInflater.from(getContext()).inflate(R.layout.item_swipe_background, viewGroup, false);
+        viewGroup.addView(swipeItemBackground, 0);
+        swipeItemTouchHelperCallback.setSwipeBackground(swipeItemBackground);
+
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeItemTouchHelperCallback);
         itemTouchHelper.attachToRecyclerView(tasksRecycler);
 
@@ -169,7 +174,17 @@ public class DoFragment extends Fragment {
             if (getView() == null) { return; }
             final TaskComplete taskComplete = new TaskComplete(-1, new Date().getTime(), task.id);
             asyncTaskDelegate.registerAsyncDataTask(taskCompleteDao.create(taskComplete)
-                .setListener(new CreateTaskCompleteListenerImpl())
+                .setListener(new CreateTaskCompleteListenerImpl(task.id))
+                .execute());
+        }
+
+        @Override
+        public void onUndo(Task task) {
+            if (getView() == null) { return; }
+            final int taskCompleteId = undoStack.getLatestTaskCompeteId(task.id);
+            if (taskCompleteId == UndoStack.NO_TASK) { return; }
+            asyncTaskDelegate.registerAsyncDataTask(taskCompleteDao.delete(taskCompleteId)
+                .setListener(new UndoCompleteListenerImpl())
                 .execute());
         }
     }
@@ -179,6 +194,7 @@ public class DoFragment extends Fragment {
         @Override
         public void onSuccess(List<Task> tasks) {
             if (getView() != null && taskAdapter != null) {
+                undoStack.clearLatestTaskCompleteIds();
                 showEmptyView(tasks.isEmpty());
                 taskAdapter.setTasks(tasks);
             }
@@ -194,21 +210,15 @@ public class DoFragment extends Fragment {
 
     private class CreateTaskCompleteListenerImpl implements AsyncDataTaskListener<Integer> {
 
+        private final int taskId;
+
+        private CreateTaskCompleteListenerImpl(int taskId) {
+            this.taskId = taskId;
+        }
+
         @Override
-        public void onSuccess(final Integer taskCompleteId) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.task_completed, LENGTH_LONG)
-                    .setAction(R.string.undo, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            asyncTaskDelegate.registerAsyncDataTask(taskCompleteDao.delete(taskCompleteId)
-                                .setListener(new UndoCompleteListenerImpl())
-                                .execute());
-                        }
-                    })
-                    .show();
-                fetchData();
-            }
+        public void onSuccess(Integer taskCompleteId) {
+            undoStack.setLatestTaskCompleteId(taskId, taskCompleteId);
         }
 
         @Override

@@ -397,7 +397,7 @@ public class TaskFragment extends Fragment {
         @Override
         public void onSuccess(Void aVoid) {
             if (getView() != null && navigates != null) {
-                undoStack.setDeleteTask(taskId);
+                undoStack.setDeleteTaskId(taskId);
                 navigates.back();
             }
         }

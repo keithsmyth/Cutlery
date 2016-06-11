@@ -12,7 +12,7 @@ public class UndoStack {
     private int taskId = NO_TASK;
     private final SparseIntArray taskIdToCompleteTaskId = new SparseIntArray();
 
-    public void setDeleteTask(int taskId) {
+    public void setDeleteTaskId(int taskId) {
         this.taskId = taskId;
     }
 

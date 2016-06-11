@@ -81,7 +81,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
             public void onClick(View v) {
                 if (taskActionListener != null) {
                     if (isCompleted) {
-                        taskActionListener.onUndo(taskListItem);
+                        taskActionListener.onUndoCompleteTask(taskListItem);
                     } else {
                         taskActionListener.onTaskEdit(taskListItem);
                     }
@@ -104,6 +104,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
         this.tasks.addAll(tasks);
         completedTasks.clear();
         notifyDataSetChanged();
+    }
+
+    public void setSingleTask(TaskListItem taskListItem) {
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).task.id == taskListItem.task.id) {
+                tasks.remove(i);
+                tasks.add(i, taskListItem);
+                notifyItemChanged(i);
+                return;
+            }
+        }
     }
 
     @Override
@@ -140,6 +151,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
 
         void onCompleted(TaskListItem taskListItem);
 
-        void onUndo(TaskListItem taskListItem);
+        void onUndoCompleteTask(TaskListItem taskListItem);
     }
 }

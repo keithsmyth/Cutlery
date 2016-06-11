@@ -141,17 +141,23 @@ public class DoFragment extends Fragment {
             .execute());
     }
 
+    private void fetchSingleItemData(int taskId) {
+        asyncTaskDelegate.registerAsyncDataTask(taskDao.listSingle(taskId)
+            .setListener(new GetSingleTaskListenerImpl())
+            .execute());
+    }
+
     private void processUndoStack() {
         final int taskId = undoStack.getDeleteTaskId();
         if (taskId == UndoStack.NO_TASK || getView() == null) { return; }
 
-        undoStack.setDeleteTask(UndoStack.NO_TASK);
+        undoStack.setDeleteTaskId(UndoStack.NO_TASK);
         Snackbar.make(getView(), R.string.task_deleted, LENGTH_LONG)
             .setAction(R.string.undo, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     asyncTaskDelegate.registerAsyncDataTask(taskDao.undoDelete(taskId)
-                        .setListener(new UndoCompleteListenerImpl())
+                        .setListener(new UndoDeleteTaskCompleteListenerImpl())
                         .execute());
                 }
             })
@@ -181,12 +187,12 @@ public class DoFragment extends Fragment {
         }
 
         @Override
-        public void onUndo(TaskListItem taskListItem) {
+        public void onUndoCompleteTask(TaskListItem taskListItem) {
             if (getView() == null) { return; }
             final int taskCompleteId = undoStack.getLatestTaskCompeteId(taskListItem.task.id);
             if (taskCompleteId == UndoStack.NO_TASK) { return; }
             asyncTaskDelegate.registerAsyncDataTask(taskCompleteDao.delete(taskCompleteId)
-                .setListener(new UndoCompleteListenerImpl())
+                .setListener(new UndoCompleteTaskCompleteListenerImpl(taskListItem.task.id))
                 .execute());
         }
     }
@@ -199,6 +205,23 @@ public class DoFragment extends Fragment {
                 undoStack.clearLatestTaskCompleteIds();
                 showEmptyView(tasks.isEmpty());
                 taskAdapter.setTasks(tasks);
+            }
+        }
+
+        @Override
+        public void onError(Exception e) {
+            if (getView() != null) {
+                Snackbar.make(getView(), e.getMessage(), LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private class GetSingleTaskListenerImpl implements AsyncDataTaskListener<TaskListItem> {
+
+        @Override
+        public void onSuccess(TaskListItem model) {
+            if (getView() != null && model != null && taskAdapter != null) {
+                taskAdapter.setSingleTask(model);
             }
         }
 
@@ -231,12 +254,36 @@ public class DoFragment extends Fragment {
         }
     }
 
-    private class UndoCompleteListenerImpl implements AsyncDataTaskListener<Void> {
+    private class UndoDeleteTaskCompleteListenerImpl implements AsyncDataTaskListener<Void> {
 
         @Override
         public void onSuccess(Void aVoid) {
             if (getView() != null) {
-                fetchData(); // TODO: BUG Cannot handle multiple undo's
+                fetchData();
+                Snackbar.make(getView(), R.string.task_undo_success, Snackbar.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onError(Exception e) {
+            if (getView() != null) {
+                Snackbar.make(getView(), e.getMessage(), LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private class UndoCompleteTaskCompleteListenerImpl implements AsyncDataTaskListener<Void> {
+
+        private final int taskId;
+
+        public UndoCompleteTaskCompleteListenerImpl(int taskId) {
+            this.taskId = taskId;
+        }
+
+        @Override
+        public void onSuccess(Void aVoid) {
+            if (getView() != null) {
+                fetchSingleItemData(taskId);
                 Snackbar.make(getView(), R.string.task_undo_success, Snackbar.LENGTH_SHORT).show();
             }
         }

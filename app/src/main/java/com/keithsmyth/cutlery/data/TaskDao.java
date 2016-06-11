@@ -78,9 +78,7 @@ public class TaskDao {
             public List<TaskListItem> task() {
                 final SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
                 try (final Cursor cursor = db.rawQuery(sql, null)) {
-                    if (cursor == null) {
-                        return Collections.emptyList();
-                    }
+                    if (cursor == null) { return Collections.emptyList(); }
                     final List<TaskListItem> tasks = new ArrayList<>(cursor.getCount());
                     while (cursor.moveToNext()) {
                         tasks.add(mapToTaskListItem(cursor));
@@ -98,12 +96,28 @@ public class TaskDao {
         };
     }
 
-    public AsyncDataTask<Task> get(final int id) {
+    public AsyncDataTask<TaskListItem> listSingle(final int taskId) {
+        final String sql = buildTaskListItemSql(taskId);
+        return new AsyncDataTask<TaskListItem>(false) {
+            @Override
+            public TaskListItem task() {
+                final SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
+                try (final Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(taskId)})) {
+                    if (cursor != null && cursor.moveToNext()) {
+                        return mapToTaskListItem(cursor);
+                    }
+                    return null;
+                }
+            }
+        };
+    }
+
+    public AsyncDataTask<Task> get(final int taskId) {
         return new AsyncDataTask<Task>(false) {
             @Override
             public Task task() {
                 final SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-                try (final Cursor cursor = db.query(TABLE, COLS, COL_ID + " = ?", new String[]{String.valueOf(id)}, null, null, null)) {
+                try (final Cursor cursor = db.query(TABLE, COLS, COL_ID + " = ?", new String[]{String.valueOf(taskId)}, null, null, null)) {
                     if (cursor == null || !cursor.moveToNext()) { return null; }
                     return mapToTask(cursor);
                 }

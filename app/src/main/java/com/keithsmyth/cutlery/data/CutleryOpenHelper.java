@@ -15,8 +15,14 @@ public class CutleryOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(TaskDao.CREATE);
-        db.execSQL(TaskCompleteDao.CREATE);
+        try {
+            db.beginTransaction();
+            db.execSQL(TaskDao.CREATE);
+            db.execSQL(TaskCompleteDao.CREATE);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     @Override

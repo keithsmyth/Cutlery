@@ -26,7 +26,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 public class CreateTaskMissingDataTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public final ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Before
     public void setup() {

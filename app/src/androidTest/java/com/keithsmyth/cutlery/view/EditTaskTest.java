@@ -30,7 +30,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 public class EditTaskTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public final ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Before
     public void setup() {

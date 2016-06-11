@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ImageButton
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/icon_image"
     android:layout_width="@dimen/icon_size"
     android:layout_height="@dimen/icon_size"
     android:background="?attr/selectableItemBackgroundBorderless"
-    android:scaleType="fitXY"/>
+    android:scaleType="fitXY"
+    tools:ignore="ContentDescription"/>

@@ -1,5 +1,7 @@
 package com.keithsmyth.cutlery.data;
 
+import android.util.SparseArray;
+
 import com.keithsmyth.cutlery.R;
 import com.keithsmyth.cutlery.model.Icon;
 
@@ -14,7 +16,7 @@ public class IconDao {
     private static final Icon NO_ICON = new Icon(-1, R.drawable.ic_add_circle_outline_black_24dp);
 
     private final List<Icon> icons;
-    private final Map<Integer, Icon> map;
+    private final SparseArray<Icon> map;
 
     public IconDao() {
         icons = Collections.unmodifiableList(Arrays.asList(
@@ -64,7 +66,7 @@ public class IconDao {
             new Icon(43, R.drawable.ic_public_black_24dp),
             new Icon(44, R.drawable.ic_whatshot_black_24dp)
         ));
-        map = new HashMap<>(icons.size());
+        map = new SparseArray<>(icons.size());
         for (Icon icon : icons) {
             map.put(icon.id, icon);
         }
@@ -75,6 +77,6 @@ public class IconDao {
     }
 
     public Icon get(int id) {
-        return map.containsKey(id) ? map.get(id) : NO_ICON;
+        return map.get(id, NO_ICON);
     }
 }

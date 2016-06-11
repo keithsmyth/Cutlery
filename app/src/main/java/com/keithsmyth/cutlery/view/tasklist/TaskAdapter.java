@@ -68,9 +68,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
         } else if (taskListItem.daysOverDue == 0) {
             dueText = holder.context.getString(R.string.task_due);
         } else if (taskListItem.daysOverDue < 0) {
-            dueText = holder.context.getString(R.string.task_due_soon, Math.abs(taskListItem.daysOverDue));
+            final int daysOverDue = Math.abs(taskListItem.daysOverDue);
+            dueText = holder.context.getResources().getQuantityString(R.plurals.task_due_soon, daysOverDue, daysOverDue);
         } else {
-            dueText = holder.context.getString(R.string.task_due_overdue, taskListItem.daysOverDue);
+            dueText = holder.context.getResources().getQuantityString(R.plurals.task_due_overdue, taskListItem.daysOverDue, taskListItem.daysOverDue);
         }
         holder.dueText.setText(dueText);
         holder.dueText.setTextColor(textColour);

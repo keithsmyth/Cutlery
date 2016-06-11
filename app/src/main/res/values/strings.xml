@@ -3,8 +3,14 @@
     <string name="undo">Undo</string>
 
     <string name="task_empty">Tap the button\nto create a task!</string>
-    <string name="task_due_overdue">%d days</string>
-    <string name="task_due_soon">in %d days</string>
+    <plurals name="task_due_overdue">
+        <item quantity="one">Yesterday</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="task_due_soon">
+        <item quantity="one">Tomorrow</item>
+        <item quantity="other">in %d days</item>
+    </plurals>
     <string name="task_due">Due</string>
     <string name="task_completed">Task Completed</string>
     <string name="task_deleted">Task Deleted</string>
@@ -14,7 +20,6 @@
     <string name="create_title_edit">Edit Task</string>
     <string name="create_set_icon">Set Icon</string>
     <string name="create_name">Name</string>
-    <string name="create_value">Value</string>
     <string name="create_save">Save</string>
     <string name="create_delete">Delete</string>
     <string name="create_confirm_delete_title">Delete this Task</string>

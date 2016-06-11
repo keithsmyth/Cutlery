@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
              xmlns:tools="http://schemas.android.com/tools"
-             android:id="@+id/swipe_item_background"
              android:layout_width="match_parent"
              android:layout_height="?attr/listPreferredItemHeight"
              android:background="@color/primary"
@@ -11,6 +11,6 @@
         android:layout_width="?attr/listPreferredItemHeight"
         android:layout_height="?attr/listPreferredItemHeight"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_done_black_24dp"
+        app:srcCompat="@drawable/ic_done_black_24dp"
         tools:ignore="ContentDescription"/>
 </FrameLayout>

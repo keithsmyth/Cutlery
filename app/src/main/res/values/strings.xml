@@ -3,8 +3,8 @@
     <string name="undo">Undo</string>
 
     <string name="task_empty">Tap the button\nto create a task!</string>
-    <string name="task_due_overdue">%s days</string>
-    <string name="task_due_soon">in %s days</string>
+    <string name="task_due_overdue">%d days</string>
+    <string name="task_due_soon">in %d days</string>
     <string name="task_due">Due</string>
     <string name="task_completed">Task Completed</string>
     <string name="task_deleted">Task Deleted</string>

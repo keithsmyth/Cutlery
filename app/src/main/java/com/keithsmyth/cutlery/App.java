@@ -7,6 +7,8 @@ import com.keithsmyth.cutlery.data.DataInjector;
 
 public class App extends Application {
 
+    // TODO: Generate daily notification
+
     private DataInjector injector;
 
     public static App get(Context context) {

@@ -236,7 +236,7 @@ public class DoFragment extends Fragment {
         @Override
         public void onSuccess(Void aVoid) {
             if (getView() != null) {
-                fetchData();
+                fetchData(); // TODO: BUG Cannot handle multiple undo's
                 Snackbar.make(getView(), R.string.task_undo_success, Snackbar.LENGTH_SHORT).show();
             }
         }

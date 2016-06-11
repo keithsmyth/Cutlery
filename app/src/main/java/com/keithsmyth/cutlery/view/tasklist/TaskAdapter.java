@@ -25,6 +25,8 @@ import java.util.Set;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
     implements SwipeItemTouchHelperCallback.SwipeListener {
 
+    // TODO: Group by Overdue, Due, This week etc
+
     private final IconDao iconDao;
     private final List<Task> tasks;
     private final Set<Task> completedTasks;

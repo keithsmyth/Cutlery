@@ -11,6 +11,7 @@ android {
         versionCode 2
         versionName "0.7"
         vectorDrawables.useSupportLibrary = true
+        // TODO: Use Jack and Java 8
     }
     buildTypes {
         debug {

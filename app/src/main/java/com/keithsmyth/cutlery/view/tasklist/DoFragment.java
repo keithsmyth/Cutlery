@@ -22,8 +22,8 @@ import com.keithsmyth.cutlery.data.IconDao;
 import com.keithsmyth.cutlery.data.TaskCompleteDao;
 import com.keithsmyth.cutlery.data.TaskDao;
 import com.keithsmyth.cutlery.data.UndoStack;
-import com.keithsmyth.cutlery.model.Task;
 import com.keithsmyth.cutlery.model.TaskComplete;
+import com.keithsmyth.cutlery.model.TaskListItem;
 import com.keithsmyth.cutlery.view.AsyncTaskDelegate;
 import com.keithsmyth.cutlery.view.DividerItemDecoration;
 import com.keithsmyth.cutlery.view.Navigates;
@@ -165,25 +165,25 @@ public class DoFragment extends Fragment {
     private class TaskActionListenerImpl implements TaskAdapter.TaskActionListener {
 
         @Override
-        public void onTaskEdit(Task task) {
+        public void onTaskEdit(TaskListItem taskListItem) {
             if (navigates != null && getView() != null) {
-                navigates.to(TaskFragment.editTask(task.id));
+                navigates.to(TaskFragment.editTask(taskListItem.task.id));
             }
         }
 
         @Override
-        public void onCompleted(Task task) {
+        public void onCompleted(TaskListItem taskListItem) {
             if (getView() == null) { return; }
-            final TaskComplete taskComplete = new TaskComplete(-1, new Date().getTime(), task.id);
+            final TaskComplete taskComplete = new TaskComplete(-1, new Date().getTime(), taskListItem.task.id);
             asyncTaskDelegate.registerAsyncDataTask(taskCompleteDao.create(taskComplete)
-                .setListener(new CreateTaskCompleteListenerImpl(task.id))
+                .setListener(new CreateTaskCompleteListenerImpl(taskListItem.task.id))
                 .execute());
         }
 
         @Override
-        public void onUndo(Task task) {
+        public void onUndo(TaskListItem taskListItem) {
             if (getView() == null) { return; }
-            final int taskCompleteId = undoStack.getLatestTaskCompeteId(task.id);
+            final int taskCompleteId = undoStack.getLatestTaskCompeteId(taskListItem.task.id);
             if (taskCompleteId == UndoStack.NO_TASK) { return; }
             asyncTaskDelegate.registerAsyncDataTask(taskCompleteDao.delete(taskCompleteId)
                 .setListener(new UndoCompleteListenerImpl())
@@ -191,10 +191,10 @@ public class DoFragment extends Fragment {
         }
     }
 
-    private class GetTasksListenerImpl implements AsyncDataTaskListener<List<Task>> {
+    private class GetTasksListenerImpl implements AsyncDataTaskListener<List<TaskListItem>> {
 
         @Override
-        public void onSuccess(List<Task> tasks) {
+        public void onSuccess(List<TaskListItem> tasks) {
             if (getView() != null && taskAdapter != null) {
                 undoStack.clearLatestTaskCompleteIds();
                 showEmptyView(tasks.isEmpty());

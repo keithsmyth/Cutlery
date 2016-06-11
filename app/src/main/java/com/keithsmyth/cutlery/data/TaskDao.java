@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.keithsmyth.cutlery.model.Task;
+import com.keithsmyth.cutlery.model.TaskListItem;
 
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -41,6 +42,8 @@ public class TaskDao {
         COL_ARCHIVED
     };
 
+    private static final int ALL_TASK_ID = -1;
+
     private final SQLiteOpenHelper sqLiteOpenHelper;
 
     public TaskDao(SQLiteOpenHelper sqLiteOpenHelper) {
@@ -67,43 +70,25 @@ public class TaskDao {
         }
     }
 
-    public AsyncDataTask<List<Task>> list() {
-        final String sql = "select t." + COL_ID + "," +
-            "t." + COL_NAME + "," +
-            "t." + COL_FREQUENCY + "," +
-            "t." + COL_FREQUENCY_VALUE + "," +
-            "t." + COL_ICON_ID + "," +
-            "t." + COL_COLOUR + "," +
-            "t." + COL_ARCHIVED + "," +
-            "MAX(c." + TaskCompleteDao.COL_DATE_TIME + ") as dateTimeLastDone " +
-            "from " + TABLE + " t " +
-            "left outer join " + TaskCompleteDao.TABLE + " c " +
-            "on t." + COL_ID + " = c." + TaskCompleteDao.COL_TASK_ID + " " +
-            "where t." + COL_ARCHIVED + " = 0 " +
-            "group by t." + COL_ID + "," +
-            "t." + COL_NAME + "," +
-            "t." + COL_FREQUENCY + "," +
-            "t." + COL_FREQUENCY_VALUE + "," +
-            "t." + COL_ICON_ID + "," +
-            "t." + COL_COLOUR + "," +
-            "t." + COL_ARCHIVED;
+    public AsyncDataTask<List<TaskListItem>> list() {
+        final String sql = buildTaskListItemSql(ALL_TASK_ID);
 
-        return new AsyncDataTask<List<Task>>(false) {
+        return new AsyncDataTask<List<TaskListItem>>(false) {
             @Override
-            public List<Task> task() {
+            public List<TaskListItem> task() {
                 final SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
                 try (final Cursor cursor = db.rawQuery(sql, null)) {
                     if (cursor == null) {
                         return Collections.emptyList();
                     }
-                    final List<Task> tasks = new ArrayList<>(cursor.getCount());
+                    final List<TaskListItem> tasks = new ArrayList<>(cursor.getCount());
                     while (cursor.moveToNext()) {
-                        tasks.add(map(cursor, true));
+                        tasks.add(mapToTaskListItem(cursor));
                     }
-                    Collections.sort(tasks, new Comparator<Task>() {
+                    Collections.sort(tasks, new Comparator<TaskListItem>() {
                         @Override
-                        public int compare(Task lhs, Task rhs) {
-                            // reverse order for {@link Task.daysOverDue}
+                        public int compare(TaskListItem lhs, TaskListItem rhs) {
+                            // reverse order for {@link TaskListItem.daysOverDue}
                             return Integer.compare(rhs.daysOverDue, lhs.daysOverDue);
                         }
                     });
@@ -119,10 +104,8 @@ public class TaskDao {
             public Task task() {
                 final SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
                 try (final Cursor cursor = db.query(TABLE, COLS, COL_ID + " = ?", new String[]{String.valueOf(id)}, null, null, null)) {
-                    if (cursor == null || !cursor.moveToNext()) {
-                        return null;
-                    }
-                    return map(cursor, false);
+                    if (cursor == null || !cursor.moveToNext()) { return null; }
+                    return mapToTask(cursor);
                 }
             }
         };
@@ -187,6 +170,32 @@ public class TaskDao {
         };
     }
 
+    private String buildTaskListItemSql(int taskId) {
+        final StringBuilder builder = new StringBuilder("select t." + COL_ID + "," +
+            "t." + COL_NAME + "," +
+            "t." + COL_FREQUENCY + "," +
+            "t." + COL_FREQUENCY_VALUE + "," +
+            "t." + COL_ICON_ID + "," +
+            "t." + COL_COLOUR + "," +
+            "t." + COL_ARCHIVED + "," +
+            "MAX(c." + TaskCompleteDao.COL_DATE_TIME + ") as dateTimeLastDone " +
+            "from " + TABLE + " t " +
+            "left outer join " + TaskCompleteDao.TABLE + " c " +
+            "on t." + COL_ID + " = c." + TaskCompleteDao.COL_TASK_ID + " " +
+            "where t." + COL_ARCHIVED + " = 0 ");
+        if (taskId != ALL_TASK_ID) {
+            builder.append("and t." + COL_ID + " = ? ");
+        }
+        builder.append("group by t." + COL_ID + "," +
+            "t." + COL_NAME + "," +
+            "t." + COL_FREQUENCY + "," +
+            "t." + COL_FREQUENCY_VALUE + "," +
+            "t." + COL_ICON_ID + "," +
+            "t." + COL_COLOUR + "," +
+            "t." + COL_ARCHIVED);
+        return builder.toString();
+    }
+
     private void updateTaskArchived(int id, boolean value) {
         final SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
         final ContentValues values = new ContentValues(1);
@@ -194,7 +203,7 @@ public class TaskDao {
         db.update(TABLE, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
     }
 
-    private Task map(Cursor cursor, boolean includeLastDone) {
+    private Task mapToTask(Cursor cursor) {
         final int id = cursor.getInt(0);
         final String name = cursor.getString(1);
         final String frequency = cursor.getString(2);
@@ -202,10 +211,6 @@ public class TaskDao {
         final int iconId = cursor.getInt(4);
         final int colour = cursor.getInt(5);
         final boolean isArchived = cursor.getInt(6) != 0;
-        final long dateTimeLastDone = includeLastDone ? cursor.getLong(7) : 0;
-        final int daysOverDue = includeLastDone
-            ? calcDaysOverDue(dateTimeLastDone, frequency, frequencyValue)
-            : 0;
 
         return new Task(id,
             name,
@@ -213,9 +218,14 @@ public class TaskDao {
             frequencyValue,
             iconId,
             colour,
-            isArchived,
-            dateTimeLastDone,
-            daysOverDue);
+            isArchived);
+    }
+
+    private TaskListItem mapToTaskListItem(Cursor cursor) {
+        final Task task = mapToTask(cursor);
+        final long dateTimeLastDone = cursor.getLong(7);
+        final int daysOverDue = calcDaysOverDue(dateTimeLastDone, task.frequency, task.frequencyValue);
+        return new TaskListItem(task, daysOverDue);
     }
 
     private int calcDaysOverDue(long dateTimeLastDone,

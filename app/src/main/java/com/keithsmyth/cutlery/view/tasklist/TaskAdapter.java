@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.keithsmyth.cutlery.R;
 import com.keithsmyth.cutlery.data.IconDao;
 import com.keithsmyth.cutlery.model.Task;
+import com.keithsmyth.cutlery.model.TaskListItem;
 import com.keithsmyth.cutlery.view.SwipeItemTouchHelperCallback;
 
 import java.util.ArrayList;
@@ -28,8 +29,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
     // TODO: Group by Overdue, Due, This week etc
 
     private final IconDao iconDao;
-    private final List<Task> tasks;
-    private final Set<Task> completedTasks;
+    private final List<TaskListItem> tasks;
+    private final Set<TaskListItem> completedTasks;
 
     @Nullable private TaskActionListener taskActionListener;
 
@@ -47,9 +48,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Task task = tasks.get(position);
+        final TaskListItem taskListItem = tasks.get(position);
+        final Task task = taskListItem.task;
 
-        final boolean isCompleted = completedTasks.contains(task);
+        final boolean isCompleted = completedTasks.contains(taskListItem);
 
         holder.itemView.setBackgroundResource(isCompleted ? R.color.primary : android.R.color.white);
 
@@ -63,12 +65,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
         final String dueText;
         if (isCompleted) {
             dueText = holder.context.getString(R.string.undo);
-        } else if (task.daysOverDue == 0) {
+        } else if (taskListItem.daysOverDue == 0) {
             dueText = holder.context.getString(R.string.task_due);
-        } else if (task.daysOverDue < 0) {
-            dueText = holder.context.getString(R.string.task_due_soon, Math.abs(task.daysOverDue));
+        } else if (taskListItem.daysOverDue < 0) {
+            dueText = holder.context.getString(R.string.task_due_soon, Math.abs(taskListItem.daysOverDue));
         } else {
-            dueText = holder.context.getString(R.string.task_due_overdue, task.daysOverDue);
+            dueText = holder.context.getString(R.string.task_due_overdue, taskListItem.daysOverDue);
         }
         holder.dueText.setText(dueText);
         holder.dueText.setTextColor(textColour);
@@ -79,9 +81,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
             public void onClick(View v) {
                 if (taskActionListener != null) {
                     if (isCompleted) {
-                        taskActionListener.onUndo(task);
+                        taskActionListener.onUndo(taskListItem);
                     } else {
-                        taskActionListener.onTaskEdit(task);
+                        taskActionListener.onTaskEdit(taskListItem);
                     }
                 }
             }
@@ -97,7 +99,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
         this.taskActionListener = taskActionListener;
     }
 
-    public void setTasks(List<Task> tasks) {
+    public void setTasks(List<TaskListItem> tasks) {
         this.tasks.clear();
         this.tasks.addAll(tasks);
         completedTasks.clear();
@@ -106,11 +108,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
 
     @Override
     public void onItemSwiped(int position) {
-        final Task task = tasks.get(position);
-        completedTasks.add(task);
+        final TaskListItem taskListItem = tasks.get(position);
+        completedTasks.add(taskListItem);
         notifyItemChanged(position);
         if (taskActionListener != null) {
-            taskActionListener.onCompleted(task);
+            taskActionListener.onCompleted(taskListItem);
         }
     }
 
@@ -134,10 +136,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>
 
     interface TaskActionListener {
 
-        void onTaskEdit(Task task);
+        void onTaskEdit(TaskListItem taskListItem);
 
-        void onCompleted(Task task);
+        void onCompleted(TaskListItem taskListItem);
 
-        void onUndo(Task task);
+        void onUndo(TaskListItem taskListItem);
     }
 }

@@ -26,11 +26,8 @@ public class Task {
     @ColorInt public final int colour;
     public final boolean isArchived;
 
-    // TODO: Refactor Non DB fields into a ViewModel
-    public final long dateTimeLastDone;
-    public final int daysOverDue;
-
-    public Task(int id, String name, String frequency, int frequencyValue, int iconId, int colour, boolean isArchived, long dateTimeLastDone, int daysOverDue) {
+    public Task(int id, String name, String frequency, int frequencyValue, int iconId,
+                @ColorInt int colour, boolean isArchived) {
         this.id = id;
         this.name = name;
         this.frequency = frequency;
@@ -38,7 +35,5 @@ public class Task {
         this.iconId = iconId;
         this.colour = colour;
         this.isArchived = isArchived;
-        this.dateTimeLastDone = dateTimeLastDone;
-        this.daysOverDue = daysOverDue;
     }
 }

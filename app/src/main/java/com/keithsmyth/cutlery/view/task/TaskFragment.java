@@ -125,6 +125,8 @@ public class TaskFragment extends Fragment {
         });
 
         bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottom_sheet));
+        bottomSheetBehavior.setHideable(true);
+        bottomSheetBehavior.setPeekHeight(0);
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetCallbackImpl());
 
         iconButton = (ImageButton) view.findViewById(R.id.icon_button);
